@@ -6,3 +6,4 @@ scikit_learn
 seaborn
 streamlit_authenticator==0.2.2
 pathlib
+pycaret
