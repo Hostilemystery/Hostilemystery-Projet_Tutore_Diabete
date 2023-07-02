@@ -1,0 +1,11 @@
+[theme]
+base="dark"
+menu = "none"
+
+
+[server]
+autoreload = true
+
+[deprecation]
+showPyplotGlobalUse = false
+
