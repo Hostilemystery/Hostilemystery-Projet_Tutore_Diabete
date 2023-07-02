@@ -146,14 +146,14 @@ def main():
             st.subheader('User Input parameters')
             st.write(df)
              # OUTPUT
-
-            output=''
-            if prediction[0]==0:
-                output = ' Congratulations , You are not Diabetic'
-                st.success(output,icon="✅")
-            else:
-                output = 'You either have diabetes or are likely to have it. Please visit the doctor as soon as possible.'
-                st.warning(output, icon='⚠️')
+            if st.button("Predict"):
+                output=''
+                if prediction[0]==0:
+                    output = ' Congratulations , You are not Diabetic'
+                    st.success(output,icon="✅")
+                else:
+                    output = 'You either have diabetes or are likely to have it. Please visit the doctor as soon as possible.'
+                    st.warning(output, icon='⚠️')
                 
                 
         
