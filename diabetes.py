@@ -93,23 +93,61 @@ def main():
         # else:
         #     pass
 
+        # def user_input_features():
+        #     pregnancies = st.sidebar.slider('Pregnancies', 0,17, 3 )
+        #     glucose = st.sidebar.slider('Glucose', 0,200, 120 )
+        #     blood_pressure = st.sidebar.slider('Blood Pressure', 0,122, 70 )
+        #     bmi = st.sidebar.slider('BMI', 0,67, 20 )
+        #     dpf = st.sidebar.slider('Diabetes Pedigree Function', 0.0,2.4, 0.47 )
+        #     age = st.sidebar.slider('Age', 21,88, 33 )
+        #     data ={
+        #         'Pregnancies': pregnancies,
+        #         'Glucose': glucose,
+        #         'BloodPressure': blood_pressure,
+        #         'BMI': bmi,
+        #         'DiabetesPedigreeFunction': dpf,
+        #         'Age': age
+        #     }
+        #     input_data = pd.DataFrame(data, index=[0])
+        #     return input_data
         def user_input_features():
-            pregnancies = st.sidebar.slider('Pregnancies', 0,17, 3 )
-            glucose = st.sidebar.slider('Glucose', 0,200, 120 )
-            blood_pressure = st.sidebar.slider('Blood Pressure', 0,122, 70 )
-            bmi = st.sidebar.slider('BMI', 0,67, 20 )
-            dpf = st.sidebar.slider('Diabetes Pedigree Function', 0.0,2.4, 0.47 )
-            age = st.sidebar.slider('Age', 21,88, 33 )
-            data ={
-                'Pregnancies': pregnancies,
-                'Glucose': glucose,
-                'BloodPressure': blood_pressure,
-                'BMI': bmi,
-                'DiabetesPedigreeFunction': dpf,
-                'Age': age
+            # option = st.sidebar.radio("Choose Input Method", ("Upload Dataset", "Input Parameters"))
+            global option
+            option = st.sidebar.radio("Choose Input Method", ("Upload Dataset", "Input Parameters"))
+            pregnancies = 3
+            glucose = 120
+            blood_pressure = 70
+            bmi= 20
+            dpf=0.47
+            age=33
+            if option == "Upload Dataset":
+                uploaded_file = st.sidebar.file_uploader("Upload a CSV file", type="csv")
+                if uploaded_file is not None:
+                    # Read the uploaded file into a DataFrame
+                    data = pd.read_csv(uploaded_file)
+                    data = data.drop(["Insulin","SkinThickness","Outcome"],axis=1)
+                    return data
+
+            elif option == "Input Parameters":
+                pregnancies = st.sidebar.slider('Pregnancies', 0, 17, 3)
+                glucose = st.sidebar.slider('Glucose', 0, 200, 120)
+                blood_pressure = st.sidebar.slider('Blood Pressure', 0, 122, 70)
+                bmi = st.sidebar.slider('BMI', 0, 67, 20)
+                dpf = st.sidebar.slider('Diabetes Pedigree Function', 0.0, 2.4, 0.47)
+                age = st.sidebar.slider('Age', 21, 88, 33)
+            
+            data = {
+                'Pregnancies': [pregnancies],
+                'Glucose': [glucose],
+                'BloodPressure': [blood_pressure],
+                'BMI': [bmi],
+                'DiabetesPedigreeFunction': [dpf],
+                'Age': [age]
             }
-            input_data = pd.DataFrame(data, index=[0])
+
+            input_data = pd.DataFrame(data)
             return input_data
+
 
         st.markdown("""
             <style>
@@ -133,77 +171,84 @@ def main():
                 
             </style>
         """, unsafe_allow_html=True)
-
         df =user_input_features()
-        # prediction = model.predict(df)
-        prediction = load_model.predict(df)
-        
+        if df is not None:
+            
+            # prediction = model.predict(df)
+            prediction = load_model.predict(df)
+            
 
-        #main
-        # st.subheader('User Input parameters')
-        
-        with tab1:
-            st.subheader('User Input parameters')
-            st.write(df)
-             # OUTPUT
-            if st.button("Predict"):
-                output=''
-                if prediction[0]==0:
-                    output = ' Congratulations , You are not Diabetic'
-                    st.success(output,icon="✅")
-                else:
-                    output = 'You either have diabetes or are likely to have it. Please visit the doctor as soon as possible.'
-                    st.warning(output, icon='⚠️')
+            #main
+            # st.subheader('User Input parameters')
+            
+            with tab1:
+                st.subheader('User Input parameters')
                 
-                
+                st.write(df)
+                # OUTPUT
+                if st.button("Predict"):
+                    if option == "Input Parameters" :
+                        output=''
+                        if prediction[0]==0:
+                            output = ' Congratulations , You are not Diabetic'
+                            st.success(output,icon="✅")
+                        else:
+                            output = 'You either have diabetes or are likely to have it. Please visit the doctor as soon as possible.'
+                            st.warning(output, icon='⚠️')
+                    else:
+                        result = pd.concat([df, pd.DataFrame({'Prediction': prediction})], axis=1)
+                        result['Prediction'] = result['Prediction'].replace({0: "You don't have diabetes", 1: "You have diabetes"})
+                        # st.write(result)
+                        st.dataframe(result, width=None)
         
 
        
-        with tab2:
-            Graphes = st.selectbox("Data",options=("Training Data","Dataset"))
-            if Graphes=="Dataset":
-                st.subheader('Diabetes Dataset')
-                st.write(data)
-            else:
-                st.subheader('Training Data')
-                st.dataframe(data.describe())
-        with tab3:
-            Graphes = st.selectbox("Analytical graph",options=(None,"Breakdown of diabetics and non-diabetics","number of wholesales in each class"
-		                   ,"risk according to the age of each class"))
-            if Graphes=="Breakdown of diabetics and non-diabetics": 
-                def frequence_diabete():
-                    plt.figure(figsize=(8, 6))
-                    data['Outcome'].value_counts().plot(kind ='bar')
-                    plt.title("Repartition des diabetiques et non-diabetiques")
-                    plt.ylabel("Frequence")
-                    plt.tight_layout() 
-                    return st.pyplot()
-                frequence_diabete()
-            if Graphes == "number of wholesales in each class":
-                def pregnancy_diabete():
-                    pregnancy_0 = data[data['Outcome']==0]['Pregnancies'] #ressortir la classe 0
-                    pregnancy_1 = data[data['Outcome']==1]['Pregnancies'] #ressortir la classe 1
-                    sns.set(style="darkgrid")
-                    sns.histplot(pregnancy_0, label='Nbre de grossesses sans diabetes',color= 'blue',kde= True ,  )
-                    sns.histplot(pregnancy_1, label='Nbre de grossesses avec diabetes',color ='orange',kde= True )
-                    plt.title('histogramme du nombre de grosseses de chaque classe')
-                    plt.legend()
-                    return st.pyplot()
-                pregnancy_diabete()	
-            if Graphes == "risk according to the age of each class":
-                def Age_diabete():
-                    pregnancy_0 = data[data['Outcome']==0]['Age'] #ressortir la classe 0
-                    pregnancy_1 = data[data['Outcome']==1]['Age'] #ressortir la classe 1
-                    sns.set(style="darkgrid")
-                    sns.histplot(pregnancy_0, label='Age sans diabetes',color= 'blue',kde= True )
-                    sns.histplot(pregnancy_1, label='Age avec diabetes',color ='orange',kde= True )
-                    plt.title("histogramme du risque en fonction de l'age de chaque classe")
-                    plt.legend()
-                    return st.pyplot()
-                Age_diabete()
-            if Graphes ==None:
-                st.write('Use the dropbox above to visualise data analysis')
-
+            with tab2:
+                Graphes = st.selectbox("Data",options=("Training Data","Dataset"))
+                if Graphes=="Dataset":
+                    st.subheader('Diabetes Dataset')
+                    st.write(data)
+                else:
+                    st.subheader('Training Data')
+                    st.dataframe(data.describe())
+            with tab3:
+                Graphes = st.selectbox("Analytical graph",options=(None,"Breakdown of diabetics and non-diabetics","number of wholesales in each class"
+                            ,"risk according to the age of each class"))
+                if Graphes=="Breakdown of diabetics and non-diabetics": 
+                    def frequence_diabete():
+                        plt.figure(figsize=(8, 6))
+                        data['Outcome'].value_counts().plot(kind ='bar')
+                        plt.title("Repartition des diabetiques et non-diabetiques")
+                        plt.ylabel("Frequence")
+                        plt.tight_layout() 
+                        return st.pyplot()
+                    frequence_diabete()
+                if Graphes == "number of wholesales in each class":
+                    def pregnancy_diabete():
+                        pregnancy_0 = data[data['Outcome']==0]['Pregnancies'] #ressortir la classe 0
+                        pregnancy_1 = data[data['Outcome']==1]['Pregnancies'] #ressortir la classe 1
+                        sns.set(style="darkgrid")
+                        sns.histplot(pregnancy_0, label='Nbre de grossesses sans diabetes',color= 'blue',kde= True ,  )
+                        sns.histplot(pregnancy_1, label='Nbre de grossesses avec diabetes',color ='orange',kde= True )
+                        plt.title('histogramme du nombre de grosseses de chaque classe')
+                        plt.legend()
+                        return st.pyplot()
+                    pregnancy_diabete()	
+                if Graphes == "risk according to the age of each class":
+                    def Age_diabete():
+                        pregnancy_0 = data[data['Outcome']==0]['Age'] #ressortir la classe 0
+                        pregnancy_1 = data[data['Outcome']==1]['Age'] #ressortir la classe 1
+                        sns.set(style="darkgrid")
+                        sns.histplot(pregnancy_0, label='Age sans diabetes',color= 'blue',kde= True )
+                        sns.histplot(pregnancy_1, label='Age avec diabetes',color ='orange',kde= True )
+                        plt.title("histogramme du risque en fonction de l'age de chaque classe")
+                        plt.legend()
+                        return st.pyplot()
+                    Age_diabete()
+                if Graphes ==None:
+                    st.write('Use the dropbox above to visualise data analysis')
+        else:
+          st.warning("No input data provided.")
 
 
         # state2 = st.checkbox("Visualise Predictions Accuracy",value=False)
