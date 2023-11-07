@@ -33,6 +33,8 @@ This will launch the app in your browser. You can then use the sidebar to naviga
 
 To access the app online, you can visit the link of the deployed app: [https://diabete-app.onrender.com]. This app is hosted on Render, a cloud platform that makes it easy to deploy web apps and services.
 
+Note that due to the fact the app is deployed on a free server it may take some time to load (The username : nanji , password : abcd)
+
 ## App Images
 
 I will be adding some images of the app on the README soon. They will show how the app looks and works. Stay tuned!
