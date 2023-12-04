@@ -111,42 +111,42 @@ st.sidebar.header('User Input Parameters')
 #     input_data = pd.DataFrame(data, index=[0])
 #     return input_data
 def user_input_features():
-# option = st.sidebar.radio("Choose Input Method", ("Upload Dataset", "Input Parameters"))
-global option
-option = st.sidebar.radio("Choose Input Method", ("Upload Dataset", "Input Parameters"))
-pregnancies = 3
-glucose = 120
-blood_pressure = 70
-bmi= 20
-dpf=0.47
-age=33
-if option == "Upload Dataset":
-    uploaded_file = st.sidebar.file_uploader("Upload a CSV file", type="csv")
-    if uploaded_file is not None:
-        # Read the uploaded file into a DataFrame
-        data = pd.read_csv(uploaded_file)
-        data = data.drop(["Insulin","SkinThickness","Outcome"],axis=1)
-        return data
+    # option = st.sidebar.radio("Choose Input Method", ("Upload Dataset", "Input Parameters"))
+    global option
+    option = st.sidebar.radio("Choose Input Method", ("Upload Dataset", "Input Parameters"))
+    pregnancies = 3
+    glucose = 120
+    blood_pressure = 70
+    bmi= 20
+    dpf=0.47
+    age=33
+    if option == "Upload Dataset":
+        uploaded_file = st.sidebar.file_uploader("Upload a CSV file", type="csv")
+        if uploaded_file is not None:
+            # Read the uploaded file into a DataFrame
+            data = pd.read_csv(uploaded_file)
+            data = data.drop(["Insulin","SkinThickness","Outcome"],axis=1)
+            return data
 
-elif option == "Input Parameters":
-    pregnancies = st.sidebar.slider('Pregnancies', 0, 17, 3)
-    glucose = st.sidebar.slider('Glucose', 0, 200, 120)
-    blood_pressure = st.sidebar.slider('Blood Pressure', 0, 122, 70)
-    bmi = st.sidebar.slider('BMI', 0, 67, 20)
-    dpf = st.sidebar.slider('Diabetes Pedigree Function', 0.0, 2.4, 0.47)
-    age = st.sidebar.slider('Age', 21, 88, 33)
+    elif option == "Input Parameters":
+        pregnancies = st.sidebar.slider('Pregnancies', 0, 17, 3)
+        glucose = st.sidebar.slider('Glucose', 0, 200, 120)
+        blood_pressure = st.sidebar.slider('Blood Pressure', 0, 122, 70)
+        bmi = st.sidebar.slider('BMI', 0, 67, 20)
+        dpf = st.sidebar.slider('Diabetes Pedigree Function', 0.0, 2.4, 0.47)
+        age = st.sidebar.slider('Age', 21, 88, 33)
 
-data = {
-    'Pregnancies': [pregnancies],
-    'Glucose': [glucose],
-    'BloodPressure': [blood_pressure],
-    'BMI': [bmi],
-    'DiabetesPedigreeFunction': [dpf],
-    'Age': [age]
-}
+    data = {
+        'Pregnancies': [pregnancies],
+        'Glucose': [glucose],
+        'BloodPressure': [blood_pressure],
+        'BMI': [bmi],
+        'DiabetesPedigreeFunction': [dpf],
+        'Age': [age]
+    }
 
-input_data = pd.DataFrame(data)
-return input_data
+    input_data = pd.DataFrame(data)
+    return input_data
 
 
 st.markdown("""
@@ -174,8 +174,8 @@ st.markdown("""
 df =user_input_features()
 if df is not None:
 
-# prediction = model.predict(df)
-prediction = load_model.predict(df)
+    # prediction = model.predict(df)
+    prediction = load_model.predict(df)
 
 
 #main
@@ -247,8 +247,8 @@ with tab3:
         Age_diabete()
     if Graphes ==None:
         st.write('Use the dropbox above to visualise data analysis')
-else:
-st.warning("No input data provided.")
+    else:
+        st.warning("No input data provided.")
 
 
 # state2 = st.checkbox("Visualise Predictions Accuracy",value=False)
