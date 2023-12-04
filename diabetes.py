@@ -1,6 +1,6 @@
 import pickle
 from pathlib import Path
-import streamlit_authenticator as stauth  # pip install streamlit-authenticator
+#import streamlit_authenticator as stauth  # pip install streamlit-authenticator
 import time
 
 import streamlit as st
