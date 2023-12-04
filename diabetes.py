@@ -83,7 +83,7 @@ tab1, tab2, tab3 = st.tabs([":mask: Prediction",":clipboard: Data",":bar_chart: 
 
 # st.sidebar.title(f"Welcome {name}")
 st.sidebar.write(f"""
-<span style='color:orange;font-size:28px;'>Welcome { name }<span>
+<span style='color:orange;font-size:28px;'>Welcome to diadetect<span>
 """, unsafe_allow_html=True)
 st.sidebar.header('User Input Parameters')
 # state1 = st.sidebar.checkbox("Display Training Data",value=False)
